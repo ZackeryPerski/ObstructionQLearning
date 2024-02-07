@@ -138,7 +138,7 @@ def drawGameBoard():
     pygame.draw.rect(screen,C_BLACK,rect,border_radius=1,width=1)            
     for i in range(1,17):
         for j in range(0,17):
-            val = gameBoardVis[i][j]
+            val = gameboardVis[i][j]
             if(val==-1):
                 continue
             rect = pygame.Rect(j*SCALE,i*SCALE,SCALE,SCALE)
@@ -177,12 +177,69 @@ def drawGameBoard():
                 else:#all starters share the same basic appearance
                     continue
 
+def getPlayerPositions(player, visToLogMap):
+    '''TODO:Need to finish out this logic as well. This is a dependency for several functions.'''
+    positions = np.zeros(5,141)
+    #numpy.where will likely be helpful here.
+
+    return positions
+
+def getValidMoves(activePlayer, movementVal, visToLogMap):
+    '''TODO:Need to finish out the logic. Placeholdered for now.'''
+    validMoves = np.zeros(5,141)
+    return validMoves, True
+
+def getObstructionSpaces(visToLogMap):
+    obstructions = np.zeros(1,141)
+    for i in range (1,15): #exclude top row and the bottom rows, as those are invalid positions.
+        for j in range(0,17):
+            if gameboardVis[i][j] == 21:
+                obstructions[0][visToLogMap[(i,j)]]=1
+    return obstructions
+
+def retrieveGameState(activePlayer, movementVal, visToLogMap):
+    '''
+        Returns a 2d matrix that is more ML friendly that is one hot encoded.
+        0 = red
+        1 = yellow
+        2 = blue
+        3 = green
+        Output of retrieve gamestate is based off of the active player, making it easier to train multiple colored agents.
+        The encoded board is optimized by having only the valid spaces mapped, e.g. no walls are present.
+    '''
+    validMovesEncoded, validMovesExist = getValidMoves(activePlayer, movementVal, visToLogMap)
+    if not validMovesExist: #INCREDIBLY RARELY if there are NO valid moves, your turn is straight up skipped. Sad.
+        return None #will indicate to end turn prematurely before any actions are taken. 
+    redPositions = getPlayerPositions(0,visToLogMap)
+    yellowPositions = getPlayerPositions(1,visToLogMap)
+    bluePositions = getPlayerPositions(2,visToLogMap)
+    greenPositions = getPlayerPositions(3,visToLogMap)
+    obstructions = getObstructionSpaces(visToLogMap)
+    gameboardEncoded = np.vstack((validMovesEncoded,redPositions,yellowPositions,bluePositions,greenPositions,obstructions))
+
+    return gameboardEncoded
+
+def getLogicalMapping(gameboardVis):
+    '''returns a dictionary of valid positions based off of (x,y) tuples mapped to a linear array.'''
+    mapping = {}
+    count = 0
+    for i in range(0,17):
+        for j in range(0,17):
+            if gameboardVis[i][j] != 0:
+                mapping[(i,j)] = count
+                count = count+1
+    return mapping
 
 
-gameBoardVis=initGameBoard()
+gameboardVis=initGameBoard()
+visToLogMap = getLogicalMapping(gameboardVis)
+
 drawGameBoard()
 # Update the display
 pygame.display.flip()
+
+#playSpaces = 141 #as a reference.
+
 
 running = True
 while running:
