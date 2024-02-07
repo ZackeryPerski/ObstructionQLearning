@@ -16,9 +16,10 @@ C_BLUE = (0,0,255)
 C_YELLOW = (200,200,0)
 C_GOLD = (255,215,0)
 C_WHITE = (255,255,255)
+SCALE = 20
 
-screen_width = 170
-screen_height = 170
+screen_width = 17*SCALE
+screen_height = 17*SCALE
 screen = pygame.display.set_mode((screen_width, screen_height))
 gameboardVis = None
 
@@ -132,7 +133,7 @@ def initGameBoard():
 
 def drawGameBoard():
     screen.fill(C_NAVY)
-    rect=pygame.Rect(80,0,10,10)
+    rect=pygame.Rect(8*SCALE,0,SCALE,SCALE)
     pygame.draw.rect(screen,C_GOLD,rect,border_radius=1)
     pygame.draw.rect(screen,C_BLACK,rect,border_radius=1,width=1)            
     for i in range(1,17):
@@ -140,12 +141,12 @@ def drawGameBoard():
             val = gameBoardVis[i][j]
             if(val==-1):
                 continue
-            rect = pygame.Rect(j*10,i*10,10,10)
+            rect = pygame.Rect(j*SCALE,i*SCALE,SCALE,SCALE)
             if(val>=0 and val<=21):
                 pygame.draw.rect(screen,C_TAN,rect,border_radius=1)
                 pygame.draw.rect(screen,C_BLACK,rect,border_radius=1,width=1)
                 if(val==21):#draw blocker
-                    pygame.draw.circle(screen,C_BLACK,center=(j*10+5,i*10+5),radius=4)
+                    pygame.draw.circle(screen,C_BLACK,center=(j*SCALE+int(SCALE/2),i*SCALE+int(SCALE/2)),radius=int(int(SCALE/2)*.8))
                 if(val>=1 and val<=5):#draw red player token
                     continue
                 if(val>=6 and val<=10):#draw yellow player token
@@ -158,23 +159,24 @@ def drawGameBoard():
                 pygame.draw.rect(screen,C_WHITE,rect,border_radius=1)
                 pygame.draw.rect(screen,C_BLACK,rect,border_radius=1,width=1)
                 if(val==23):#red filled starter
-                    pygame.draw.circle(screen,C_RED,center=(j*10+5,i*10+5),radius=4)
+                    pygame.draw.circle(screen,C_RED,center=(j*SCALE+int(SCALE/2),i*SCALE+int(SCALE/2)),radius=int(int(SCALE/2)*.8))
                 elif(val==24):#red unfilled starter
-                    pygame.draw.circle(screen,C_RED,center=(j*10+5,i*10+5),radius=2)
+                    pygame.draw.circle(screen,C_RED,center=(j*SCALE+int(SCALE/2),i*SCALE+int(SCALE/2)),radius=int(int(SCALE/2)*.6))
                 elif(val==26):#yellow filled starter
-                    pygame.draw.circle(screen,C_YELLOW,center=(j*10+5,i*10+5),radius=4)
+                    pygame.draw.circle(screen,C_YELLOW,center=(j*SCALE+int(SCALE/2),i*SCALE+int(SCALE/2)),radius=int(int(SCALE/2)*.8))
                 elif(val==27):#yellow unfilled starter
-                    pygame.draw.circle(screen,C_YELLOW,center=(j*10+5,i*10+5),radius=2)
+                    pygame.draw.circle(screen,C_YELLOW,center=(j*SCALE+int(SCALE/2),i*SCALE+int(SCALE/2)),radius=int(int(SCALE/2)*.6))
                 elif(val==29):#blue filled starter
-                    pygame.draw.circle(screen,C_BLUE,center=(j*10+5,i*10+5),radius=4)
+                    pygame.draw.circle(screen,C_BLUE,center=(j*SCALE+int(SCALE/2),i*SCALE+int(SCALE/2)),radius=int(int(SCALE/2)*.8))
                 elif(val==30):#blue unfilled starter
-                    pygame.draw.circle(screen,C_BLUE,center=(j*10+5,i*10+5),radius=2)
+                    pygame.draw.circle(screen,C_BLUE,center=(j*SCALE+int(SCALE/2),i*SCALE+int(SCALE/2)),radius=int(int(SCALE/2)*.6))
                 elif(val==32):#green filled starter
-                    pygame.draw.circle(screen,C_GREEN,center=(j*10+5,i*10+5),radius=4)
+                    pygame.draw.circle(screen,C_GREEN,center=(j*SCALE+int(SCALE/2),i*SCALE+int(SCALE/2)),radius=int(int(SCALE/2)*.8))
                 elif(val==33):#green unfilled starter
-                    pygame.draw.circle(screen,C_GREEN,center=(j*10+5,i*10+5),radius=2)
+                    pygame.draw.circle(screen,C_GREEN,center=(j*SCALE+int(SCALE/2),i*SCALE+int(SCALE/2)),radius=int(int(SCALE/2)*.6))
                 else:#all starters share the same basic appearance
                     continue
+
 
 
 gameBoardVis=initGameBoard()
