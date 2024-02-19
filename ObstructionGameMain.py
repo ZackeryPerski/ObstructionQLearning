@@ -198,11 +198,23 @@ def getPlayerPositions(player, visToLogMap):
         logicalPlayerPositions[i][logicalPosition] = 1
     return logicalPlayerPositions
 
-def getValidMoves(player, movementVal, visToLogMap):
-    '''TODO:Need to finish out the logic. Placeholdered for now.'''
-    validMoves = np.zeros(5,141) #each row here indicates for
+def getValidPieceMoves(piece, movementVal, visToLogMap):
+    '''TODO:Finish this later.'''
+    return None
 
-    return validMoves, True
+def getValidMoves(player, movementVal, visToLogMap):
+    '''TODO:Write this more efficiently later.'''
+    validMoves = np.zeros(5,141) #each row here indicates for
+    movesExist = False
+    for i in range(len(player)):
+        #recursive find?
+        pieceValidMoves = getValidPieceMoves(player[i], movementVal, visToLogMap)#assumption that if it exists, we get a 1,141 array back, otherwise None.
+        if pieceValidMoves != None:
+            movesExist = True
+            for j in range(141):
+                validMoves[i][j] = pieceValidMoves[0][j] #gross, replace later.
+    #return validMoves, even if none exist.
+    return validMoves, movesExist
 
 def getObstructionSpaces(obstructionPieces,visToLogMap):
     '''Similar to the above function, this function returns an one hot encoded array. Obstructions all exist in the same layer though.'''
@@ -244,6 +256,10 @@ def getLogicalMapping(gameboardVis):
                 mapping[(i,j)] = count
                 count = count+1
     return mapping
+
+def gameController():
+    ''''''
+    return None
 
 if __name__ == "__main__":
     gameboardVis, players, obstructionPieces=initGameBoard()
