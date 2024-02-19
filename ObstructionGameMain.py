@@ -198,8 +198,68 @@ def getPlayerPositions(player, visToLogMap):
         logicalPlayerPositions[i][logicalPosition] = 1
     return logicalPlayerPositions
 
-def getValidPieceMoves(piece, movementVal, visToLogMap):
-    '''TODO:Finish this later.'''
+def getValidPieceMoves(piece, movementVal, visToLogMap, hist=None, pieceNumber = 1):
+    '''Recursive function to find all possible movements. At the beginning there is no history, so custom code runs there as set up and completion.'''
+    #step 1. are we starting?
+    if hist == None:
+        resultUp = getValidPieceMoves(piece, movementVal-1, visToLogMap, [(piece[0],piece[1]+1)]) #Expected results: None, if no path available, alternatively a list of valid end points per path.
+        resultDown = getValidPieceMoves(piece, movementVal-1, visToLogMap, [(piece[0],piece[1]-1)])
+        resultLeft = getValidPieceMoves(piece, movementVal-1, visToLogMap, [(piece[0]-1,piece[1])])
+        resultRight = getValidPieceMoves(piece, movementVal-1, visToLogMap, [(piece[0]-1,piece[1])])
+        if resultUp == None and resultDown == None and resultLeft == None and resultRight == None:
+            return None, None #no valid moves or logical moves.
+        #at this point, at least one result is valid, therefore we assign memory for set up.
+        logicalPieceMoves = np.zeros(shape=(1,141))
+        movesSet = {}
+        if resultUp != None: #at least one result.
+            for result in resultUp: #this is a list of valid end points.
+                logicalPieceMoves[0][visToLogMap[result]] = 1
+                movesSet.add(result)
+        if resultDown != None:
+            for result in resultDown:
+                logicalPieceMoves[0][visToLogMap[result]] = 1
+                movesSet.add(result)
+        if resultLeft != None: #at least one result.
+            for result in resultLeft: #this is a list of valid end points.
+                logicalPieceMoves[0][visToLogMap[result]] = 1
+                movesSet.add(result)
+        if resultRight != None:
+            for result in resultDown:
+                logicalPieceMoves[0][visToLogMap[result]] = 1
+                movesSet.add(result)
+        return movesSet, logicalPieceMoves
+
+    #when hist != None.
+    #Step 2. Check if the space we're on is valid. If it isn't return None.
+    cX,cY = currentPosition = hist[-1] #first, grab the latest positional data from the history. This is our current position to check.
+    posData = gameboardVis[cX][cY]
+    if (posData==-1 or posData>=23): #Tried to place the piece in a wall or on a reserved special space.
+        return None
+    if (posData==21 or posData==22 and movementVal!=0): #Tried to pass an obstruction or the finish line but have movement remaining.
+        return None
+    #Step 3. Check to make sure new position is not a retread of an old position on the trail
+    if len(hist) != len(set(hist)): #This is done via utilizing the property of sets that means no duplicates. If everything is kosher, the lengths should be the same.
+        return None
+    
+    if movementVal == 0: #out of movement...
+        if posData == 0: #Open spot, no worries! return the current position as a valid endpoint.
+            return currentPosition
+        #at this point, we've made sure
+        if posData==((pieceNumber-1)/5):
+
+        match (pieceNumber-1)/5: #multiple similar statements related to landing on your own team's piece.
+            case 0: #current piece belongs to red team.
+                if(posData>=1 and posData<=5):
+                    return None #Landing on your own token not allowed.
+            case 1: #current piece belongs to yellow team.
+
+            case 2: #current piece belongs to blue team.
+
+            case _: #current piece belongs to green team.
+
+
+
+
     return None
 
 def getValidMoves(player, movementVal, visToLogMap):
