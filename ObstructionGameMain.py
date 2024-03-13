@@ -312,17 +312,69 @@ def gameController():
     ''''''
     return None
 
+def eventManager():
+    '''Pumps all events out of the queue for the health of the system. Certain events we care about. Clicking and exiting.'''
+    for event in pygame.event.get(): #Cycles through all of the events.
+        if event.type == QUIT:
+            return True, None
+        if event.type == MOUSEBUTTONDOWN:
+            if event.button == 1: #left click
+                return False, pygame.mouse.get_pos()
+    #if we're here, nothing noteworthy.
+    return False, (-1,-1)
+
+def queryUser(color):
+    while True:
+        print("Here are your options for player "+color)
+        print("1.) Use a heuristic agent.")
+        print("2.) Use a human player.")
+        try:
+            value = int(input("Choice: "))
+        except:
+            print("Incorrect.")
+        if value > 0 and value < 3:
+            return value
+
+def gameSetUp():
+    '''Displays game start up messages and initializes settings.'''
+    playerTypes = [0,0,0,0]
+    print("Welcome to the Obstruction Game Setup!")
+    print("This version features 4 players only. If you lack friends, make sure to slot in some agents!")
+    #red yellow blue green
+    while playerTypes[0]==0:
+        print("Here are your options for player Red:")
+        print("1.) Train/Utilize a Q-Learning Agent.")
+        print("2.) Use a heuristic agent.")
+        print("3.) Use a human player.")
+        print("Note: Only player Red can be a Q-Learning Agent for this version.")
+        try:
+            value = int(input("Choice: "))
+        except:
+            print("Incorrect.")
+        if value > 0 and value < 4:
+            playerTypes[0] = value
+    playerTypes[1] = queryUser("Yellow")
+    playerTypes[2] = queryUser("Blue")
+    playerTypes[3] = queryUser("Green")
+    return playerTypes
+    
+
 if __name__ == "__main__":
+    playerTypes = gameSetUp()
     gameboardVis, players, obstructionPieces=initGameBoard()
     visToLogMap = getLogicalMapping(gameboardVis) #playSpaces = 141 as a reference.
     drawGameBoard()
     # Update the display
     pygame.display.flip()
-    running = True
-    while running:
-        for event in pygame.event.get():
-            if event.type == QUIT:
-                running = False
+    activePlayer = 0
+    while True: #main game loop.
+        quitting, mousePos = eventManager()
+        if quitting:
+            break
+        
+        
+                    
+                    
     pygame.quit()
     
     
